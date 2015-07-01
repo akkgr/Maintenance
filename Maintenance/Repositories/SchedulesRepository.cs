@@ -32,7 +32,16 @@ namespace Maintenance.Repositories
 
         public ObservableCollection<Schedule> Get(Func<Schedule, bool> p)
         {
-            db.Schedules.Where(p);
+            var list = db.Schedules.Include(t => t.Machine).Include(t => t.Employee).Where(p).ToList();
+            return db.Schedules.Local;
+        }
+
+        public ObservableCollection<Schedule> GetByDates(DateTime d1, DateTime d2)
+        {
+            var list = db.Schedules
+                .Include(t => t.Machine)
+                .Include(t => t.Employee)
+                .Where(t=>t.CurrentDate>=d1 && t.CurrentDate<=d2).ToList();
             return db.Schedules.Local;
         }
 

@@ -15,7 +15,8 @@ namespace Maintenance.Views
         {
             using (SchedulesRepository repo = new SchedulesRepository())
             {
-                var list = repo.Get();
+                var d = DateTime.Now.Date;
+                var list = repo.GetByDates(d,d);
                 olv.ModelFilter = null;
                 olv.Columns.Clear();
 
@@ -61,6 +62,15 @@ namespace Maintenance.Views
 
                 olv.Columns.Add(new BrightIdeasSoftware.OLVColumn()
                 {
+                    Text = "Ημερομηνία",
+                    AspectGetter = delegate(object row) { return ((Schedule)row).CurrentDate; },
+                    AspectToStringFormat = "{0:d}",
+                    TextAlign = System.Windows.Forms.HorizontalAlignment.Left,
+                    Width = 150
+                });
+
+                olv.Columns.Add(new BrightIdeasSoftware.OLVColumn()
+                {
                     Text = "Επόμενη Επιθεώρηση",
                     AspectGetter = delegate(object row) { return ((Schedule)row).NextDate; },
                     AspectToStringFormat = "{0:d}",
@@ -86,10 +96,20 @@ namespace Maintenance.Views
                 olv.Columns.Add(new BrightIdeasSoftware.OLVColumn()
                 {
                     Text = "Ολοκληρώθηκε",
+                    TextAlign = System.Windows.Forms.HorizontalAlignment.Center,
                     AspectGetter = delegate(object row) { return ((Schedule)row).Done; },
                     CheckBoxes = true
                 });
 
+                olv.SetObjects(list);
+            }
+        }
+
+        public void GetByDates(ObjectListView olv, DateTime d1, DateTime d2)
+        {
+            using (SchedulesRepository repo = new SchedulesRepository())
+            {
+                var list = repo.GetByDates(d1,d2);
                 olv.SetObjects(list);
             }
         }
